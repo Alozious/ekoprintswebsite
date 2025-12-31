@@ -1,5 +1,5 @@
-import React from 'react';
-import { Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, Printer } from 'lucide-react';
 
 interface HeaderProps {
   isMenuOpen: boolean;
@@ -7,6 +7,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
+  const [logoError, setLogoError] = useState(false);
+  
   const navLinks = [
     { name: 'Services', href: '#services' },
     { name: 'Portfolio', href: '#portfolio' },
@@ -19,45 +21,62 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => 
     setIsMenuOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-eko-dark/80 backdrop-blur-md border-b border-white/10">
+    <header className="fixed w-full top-0 z-50 bg-eko-dark/80 backdrop-blur-xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-24">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img 
-              src="assets/logo.png" 
-              alt="Eko Prints Logo" 
-              className="h-12 w-auto object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            <span className="font-bold text-2xl tracking-tighter text-white">
+          <div 
+            className="flex-shrink-0 flex items-center gap-3 cursor-pointer group" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            {!logoError ? (
+              <img 
+                src="assets/logo.png" 
+                alt="Eko Prints Logo" 
+                className="h-10 w-auto object-contain transition-transform group-hover:scale-110"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-10 h-10 bg-eko-primary flex items-center justify-center rounded-lg shadow-[0_0_20px_rgba(0,209,255,0.4)]">
+                <Printer className="w-6 h-6 text-eko-dark" />
+              </div>
+            )}
+            <span className="font-black text-2xl tracking-tighter text-white group-hover:text-eko-primary transition-colors">
               EKO<span className="text-eko-primary">PRINTS</span>
             </span>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-10">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-gray-300 hover:text-eko-primary transition-colors text-sm font-semibold uppercase tracking-widest"
+                className="text-gray-400 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.3em] relative group"
               >
                 {link.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-eko-primary transition-all group-hover:w-full"></span>
               </a>
             ))}
             <a 
               href="#contact"
               onClick={(e) => handleNavClick(e, '#contact')}
-              className="bg-eko-primary text-eko-dark px-5 py-2 rounded-full font-bold hover:bg-white transition-all transform hover:scale-105"
+              className="bg-white text-eko-dark px-8 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-eko-primary transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Get Quote
             </a>
@@ -67,7 +86,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => 
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-300 hover:text-white focus:outline-none"
+              className="text-white hover:text-eko-primary focus:outline-none transition-colors"
             >
               {isMenuOpen ? <X className="h-8 w-8" /> : <Menu className="h-8 w-8" />}
             </button>
@@ -75,23 +94,28 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => 
         </div>
       </div>
 
-      {/* Mobile Nav */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-eko-dark border-b border-white/10 absolute w-full">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="block px-3 py-4 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5"
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
+      {/* Mobile Nav Overlay */}
+      <div className={`md:hidden fixed inset-0 top-24 bg-eko-dark transition-all duration-500 z-40 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none translate-x-full'}`}>
+        <div className="flex flex-col p-8 space-y-6">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-3xl font-black font-heading text-white hover:text-eko-primary transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+          <a 
+            href="#contact"
+            onClick={(e) => handleNavClick(e, '#contact')}
+            className="w-full bg-eko-primary text-eko-dark py-6 text-center font-black uppercase tracking-widest text-sm"
+          >
+            Start A Project
+          </a>
         </div>
-      )}
+      </div>
     </header>
   );
 };
