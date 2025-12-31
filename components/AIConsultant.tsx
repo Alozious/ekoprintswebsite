@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Sparkles, Loader2 } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, Loader2, Target, Printer } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { generatePrintAdvice } from '../services/geminiService';
 
@@ -8,7 +8,7 @@ export const AIConsultant: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: "Hi! I'm EkoBot. Not sure which printing method fits your project? Ask me anything!" }
+    { role: 'model', text: "Welcome to the Eko Prints Studio. I'm EkoBot, your technical print consultant. Tell me about your project, and I'll recommend the best production method—be it Large Format, DTF, or Branding." }
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ export const AIConsultant: React.FC = () => {
       const responseText = await generatePrintAdvice(input);
       setMessages(prev => [...prev, { role: 'model', text: responseText }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "Sorry, I'm having trouble connecting to the design studio right now.", isError: true }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Connection error. Our servers are currently busy producing high-quality prints. Please try again in a moment.", isError: true }]);
     } finally {
       setIsLoading(false);
     }
@@ -50,76 +50,91 @@ export const AIConsultant: React.FC = () => {
       {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-40 bg-eko-primary text-eko-dark p-4 rounded-full shadow-lg hover:bg-white transition-all transform hover:scale-110 flex items-center justify-center ${isOpen ? 'hidden' : 'flex'}`}
+        className={`fixed bottom-8 right-8 z-40 bg-white text-eko-dark w-16 h-16 rounded-full shadow-[0_0_50px_rgba(0,209,255,0.3)] hover:bg-eko-primary transition-all duration-500 transform hover:scale-110 flex items-center justify-center group ${isOpen ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'}`}
         aria-label="Open AI Consultant"
       >
-        <Sparkles className="w-6 h-6 animate-pulse" />
+        <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+        <span className="absolute -top-1 -right-1 flex h-4 w-4">
+           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-eko-primary opacity-75"></span>
+           <span className="relative inline-flex rounded-full h-4 w-4 bg-eko-primary"></span>
+        </span>
       </button>
 
       {/* Chat Window */}
-      {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-full max-w-[350px] sm:w-96 bg-eko-dark border border-white/20 rounded-2xl shadow-2xl flex flex-col max-h-[600px] overflow-hidden">
-          
-          {/* Header */}
-          <div className="bg-gradient-to-r from-eko-primary to-eko-secondary p-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-white" />
-              <h3 className="font-bold text-white">EkoBot Assistant</h3>
+      <div 
+        className={`fixed bottom-8 right-8 z-50 w-[90vw] max-w-[400px] bg-eko-dark border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[70vh] md:max-h-[600px] overflow-hidden transition-all duration-500 origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-50 opacity-0 translate-y-20 pointer-events-none'}`}
+      >
+        
+        {/* Header */}
+        <div className="bg-white p-6 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-eko-dark flex items-center justify-center rounded-lg">
+              <Printer className="w-5 h-5 text-eko-primary" />
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white">
-              <X className="w-5 h-5" />
+            <div>
+              <h3 className="font-black text-eko-dark text-xs uppercase tracking-widest leading-none">EkoBot Pro</h3>
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight mt-1">AI Print Consultant</p>
+            </div>
+          </div>
+          <button onClick={() => setIsOpen(false)} className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-eko-dark hover:bg-eko-secondary hover:text-white transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#080B12] min-h-[300px]">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div 
+                className={`max-w-[85%] px-5 py-4 text-sm leading-relaxed ${
+                  msg.role === 'user' 
+                    ? 'bg-eko-primary text-eko-dark font-bold rounded-2xl rounded-tr-none' 
+                    : 'bg-white/5 text-gray-300 border border-white/10 rounded-2xl rounded-tl-none'
+                } ${msg.isError ? 'border-red-500 text-red-200 bg-red-500/10' : ''}`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-none px-5 py-4">
+                <Loader2 className="w-5 h-5 animate-spin text-eko-primary" />
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="p-6 bg-eko-dark border-t border-white/5">
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="How can I help with your print today?"
+              className="w-full bg-white/5 border border-white/10 rounded-xl pl-5 pr-14 py-4 text-white focus:outline-none focus:border-eko-primary transition-all text-sm placeholder:text-gray-600"
+            />
+            <button 
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="absolute right-2 bg-white text-eko-dark p-3 rounded-lg hover:bg-eko-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <Send className="w-4 h-4" />
             </button>
           </div>
-
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-900 h-80">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div 
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-eko-primary text-eko-dark rounded-br-none' 
-                      : 'bg-white/10 text-gray-200 rounded-bl-none'
-                  } ${msg.isError ? 'border border-red-500 text-red-200' : ''}`}
-                >
-                  {msg.text}
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white/10 rounded-2xl rounded-bl-none px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-eko-primary" />
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+          <div className="mt-4 flex items-center justify-between px-1">
+             <div className="flex gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Systems Online</span>
+             </div>
+             <p className="text-[10px] text-gray-700 font-bold uppercase tracking-[0.1em]">Engineered by Gemini 3</p>
           </div>
-
-          {/* Input Area */}
-          <div className="p-4 bg-eko-dark border-t border-white/10">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Ask about prints, materials..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white focus:outline-none focus:border-eko-primary text-sm"
-              />
-              <button 
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="bg-eko-primary text-eko-dark p-2 rounded-full hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <Send className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-xs text-center text-gray-600 mt-2">Powered by Google Gemini</p>
-          </div>
-
         </div>
-      )}
+
+      </div>
     </>
   );
 };
