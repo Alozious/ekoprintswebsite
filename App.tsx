@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
@@ -27,6 +28,9 @@ const App: React.FC = () => {
       
       {/* Floating AI Consultant */}
       <AIConsultant />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
 
       {/* Global CSS for custom animations */}
       <style>{`
