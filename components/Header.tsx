@@ -67,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <img
-            src="/assets/logos/EKO PRINTS.png"
+            src="/assets/logos/eko_prints.png"
             alt="eko PRINTS"
             className="h-10 md:h-12 w-auto object-contain"
             onError={(e) => {

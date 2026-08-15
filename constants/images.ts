@@ -45,5 +45,5 @@ export const ASSETS = {
     },
   ],
 
-  logo: '/assets/logos/EKO PRINTS.png',
+  logo: '/assets/logos/eko_prints.png',
 };

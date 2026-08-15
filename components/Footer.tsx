@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenQuote }) => {
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <img
-                src="/assets/logos/EKO PRINTS.png"
+                src="/assets/logos/eko_prints.png"
                 alt="eko PRINTS"
                 className="h-11 w-auto object-contain"
                 onError={(e) => {
