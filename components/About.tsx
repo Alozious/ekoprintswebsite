@@ -42,7 +42,7 @@ export const About: React.FC = () => {
               Your One-Stop<br />Print &amp; Brand Studio.
             </h2>
             <p className="text-gray-400 leading-relaxed mb-6">
-              We're a fully equipped printing studio based in Kampala. From the moment you walk in with an idea, we handle design, print, and delivery — all under one roof.
+              We're a fully equipped printing studio based in City View Complex, Masaka City. From the moment you walk in with an idea, we handle design, print, and delivery — all under one roof.
             </p>
             <p className="text-gray-400 leading-relaxed mb-8">
               Whether you need a single t-shirt or a full outdoor campaign, our machines and team are ready to deliver.

@@ -1,135 +1,178 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 
 interface HeaderProps {
   isMenuOpen: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
+  onOpenQuote?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
+export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpenQuote }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
+  const [activeNav, setActiveNav] = useState('home');
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 15);
+      
+      const sections = ['home', 'about', 'services', 'gallery', 'testimonials', 'contact'];
+      const scrollPos = window.scrollY + 100;
+      
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveNav(section);
+            break;
+          }
+        }
+      }
+    };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     setIsMenuOpen(false);
-    setServicesOpen(false);
-    setAboutOpen(false);
-    if (href === '#home') {
+    setActiveNav(id);
+    if (id === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
+  const navItems = [
+    { label: 'HOME', id: 'home' },
+    { label: 'ABOUT US', id: 'about' },
+    { label: 'SERVICES', id: 'services' },
+    { label: 'GALLERY', id: 'gallery' },
+    { label: 'TESTIMONIALS', id: 'testimonials' },
+    { label: 'CONTACT US', id: 'contact' },
+  ];
+
   return (
-    <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm' : 'bg-white'}`}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-white py-4'}`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+        
+        {/* Brand Logo */}
+        <div 
+          className="flex items-center gap-2 cursor-pointer select-none"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <img
+            src="/assets/logos/EKO PRINTS.png"
+            alt="eko PRINTS"
+            className="h-10 md:h-12 w-auto object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              const parent = e.currentTarget.parentElement;
+              if (parent && !parent.querySelector('.brand-fallback')) {
+                const span = document.createElement('div');
+                span.className = 'brand-fallback flex flex-col items-start leading-none';
+                span.innerHTML = `
+                  <span class="text-2xl font-black tracking-tight text-blue-700 font-heading">
+                    eko <span class="text-pink-600 font-extrabold">PRINTS</span>
+                  </span>
+                `;
+                parent.appendChild(span);
+              }
+            }}
+          />
+        </div>
 
-          {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img
-              src="assets/logos/EKO PRINTS.png"
-              alt="Eko Prints"
-              className="h-12 w-auto object-contain"
-            />
-          </div>
-
-          {/* Center Nav — Desktop */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <a href="#home" onClick={e => scrollTo(e, '#home')} className="text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
-              Home
-            </a>
-
-            {/* About Us dropdown */}
-            <div className="relative" onMouseEnter={() => setAboutOpen(true)} onMouseLeave={() => setAboutOpen(false)}>
-              <button className="flex items-center gap-1 text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
-                About Us <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {aboutOpen && (
-                <div className="absolute top-full left-0 pt-2">
-                  <div className="bg-white border border-gray-100 shadow-lg rounded-md py-2 min-w-[180px]">
-                    <a href="#about" onClick={e => scrollTo(e, '#about')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Story</a>
-                    <a href="#machines" onClick={e => scrollTo(e, '#machines')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Machines</a>
-                    <a href="#portfolio" onClick={e => scrollTo(e, '#portfolio')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Work</a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Services dropdown */}
-            <div className="relative" onMouseEnter={() => setServicesOpen(true)} onMouseLeave={() => setServicesOpen(false)}>
-              <button className="flex items-center gap-1 text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
-                Services <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {servicesOpen && (
-                <div className="absolute top-full left-0 pt-2">
-                  <div className="bg-white border border-gray-100 shadow-lg rounded-md py-2 min-w-[200px]">
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">All Services</a>
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Large Format Printing</a>
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">DTF Printing</a>
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Embroidery</a>
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">T-Shirt Printing</a>
-                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Design & Branding</a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
-              Contact Us
-            </a>
-
-            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-eko-primary hover:text-eko-primary/80 text-sm font-medium transition-colors">
-              Profile
-            </a>
-          </nav>
-
-          {/* Right — Phone */}
-          <div className="hidden lg:flex items-center gap-2 text-sm">
-            <div className="text-right">
-              <span className="text-gray-400 text-xs block leading-tight">For Inquiries:</span>
-              <a href="tel:+256703580516" className="text-gray-800 font-semibold flex items-center gap-1.5 hover:text-eko-primary transition-colors">
-                <Phone className="w-3.5 h-3.5" />
-                +256 703 580 516
+        {/* Desktop Nav Links */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {navItems.map((item) => {
+            const isActive = activeNav === item.id;
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => scrollTo(e, item.id)}
+                className={`relative text-[13px] font-bold tracking-wider uppercase transition-colors duration-200 py-1 ${
+                  isActive ? 'text-pink-600' : 'text-gray-700 hover:text-pink-600'
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-pink-500 to-rose-500 rounded-full" />
+                )}
               </a>
-            </div>
-          </div>
+            );
+          })}
+        </nav>
 
-          {/* Mobile menu button */}
-          <button
-            className="lg:hidden text-gray-700"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+        {/* Right CTA Actions: Call Button + Get a Quote */}
+        <div className="hidden lg:flex items-center gap-3">
+          <a
+            href="tel:+256703580516"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all"
+            title="Call +256 703 580 516"
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Phone className="w-3.5 h-3.5 text-pink-600" />
+            <span>Call: +256 703 580 516</span>
+          </a>
+
+          <button
+            onClick={() => onOpenQuote ? onOpenQuote() : scrollTo({ preventDefault: () => {} } as any, 'contact')}
+            className="relative px-6 py-2.5 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 hover:from-blue-800 hover:to-pink-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+          >
+            GET A QUOTE
           </button>
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="lg:hidden text-gray-800 p-2 focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle Menu"
+        >
+          {isMenuOpen ? <X className="w-6 h-6 text-pink-600" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100">
-          <div className="px-6 py-6 flex flex-col gap-4">
-            <a href="#home" onClick={e => scrollTo(e, '#home')} className="text-gray-700 font-medium">Home</a>
-            <a href="#about" onClick={e => scrollTo(e, '#about')} className="text-gray-700 font-medium">About Us</a>
-            <a href="#machines" onClick={e => scrollTo(e, '#machines')} className="text-gray-700 font-medium pl-4 text-sm text-gray-500">Our Machines</a>
-            <a href="#portfolio" onClick={e => scrollTo(e, '#portfolio')} className="text-gray-700 font-medium pl-4 text-sm text-gray-500">Our Work</a>
-            <a href="#services" onClick={e => scrollTo(e, '#services')} className="text-gray-700 font-medium">Services</a>
-            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-gray-700 font-medium">Contact Us</a>
-            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-eko-primary font-medium">Profile</a>
-            <div className="pt-4 border-t border-gray-100">
-              <span className="text-gray-400 text-xs">For Inquiries:</span>
-              <a href="tel:+256703580516" className="flex items-center gap-2 text-gray-800 font-semibold mt-1">
-                <Phone className="w-4 h-4" /> +256 703 580 516
+        <div className="lg:hidden bg-white border-t border-gray-100 shadow-xl px-6 py-6 animate-in slide-in-from-top duration-300">
+          <div className="flex flex-col gap-4">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => scrollTo(e, item.id)}
+                className={`text-sm font-bold tracking-wider uppercase py-2 border-b border-gray-50 ${
+                  activeNav === item.id ? 'text-pink-600' : 'text-gray-700'
+                }`}
+              >
+                {item.label}
               </a>
+            ))}
+            
+            <div className="pt-2 flex flex-col gap-2.5">
+              <a
+                href="tel:+256703580516"
+                className="w-full py-3 rounded-full text-xs font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center justify-center gap-2 shadow-sm text-center"
+              >
+                <Phone className="w-4 h-4 text-pink-600" /> Call: +256 703 580 516
+              </a>
+
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  if (onOpenQuote) onOpenQuote();
+                  else scrollTo({ preventDefault: () => {} } as any, 'contact');
+                }}
+                className="w-full py-3 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 text-center shadow-md"
+              >
+                GET A QUOTE
+              </button>
             </div>
           </div>
         </div>

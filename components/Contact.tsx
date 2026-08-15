@@ -21,8 +21,7 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Call or WhatsApp</p>
-                  <a href="tel:+256703580516" className="block text-white font-semibold hover:text-eko-primary transition-colors">0703 580 516</a>
-                  <a href="tel:+256792832056" className="block text-white font-semibold hover:text-eko-primary transition-colors">0792 832 056</a>
+                  <a href="tel:+256703580516" className="block text-white font-semibold hover:text-eko-primary transition-colors">+256 703 580 516</a>
                   <a
                     href="https://wa.me/256703580516"
                     target="_blank"
@@ -40,7 +39,7 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Location</p>
-                  <p className="text-white font-semibold mb-2">Level 3, Room L3-194</p>
+                  <p className="text-white font-semibold mb-2">City View Complex, Masaka City, Room L3-194</p>
                   <a
                     href="https://maps.app.goo.gl/5DmrbjGLCrFT4aUG7"
                     target="_blank"
