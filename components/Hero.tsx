@@ -1,69 +1,135 @@
 import React from 'react';
-import { ArrowRight, Zap, Target } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import { ASSETS } from '../constants/images';
 
+const heroFrames = [
+  {
+    src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=600&auto=format&fit=crop',
+    alt: 'Large Format Printing',
+    rotate: 'rotate-[8deg]',
+    size: 'w-56 h-72 md:w-64 md:h-80',
+    pos: 'top-16 right-4 md:top-12 md:right-8',
+    z: 'z-30',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?q=80&w=600&auto=format&fit=crop',
+    alt: 'T-Shirt Printing',
+    rotate: '-rotate-[6deg]',
+    size: 'w-48 h-64 md:w-56 md:h-72',
+    pos: 'top-40 right-36 md:top-36 md:right-52',
+    z: 'z-20',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1604644401890-0bd678c83788?q=80&w=600&auto=format&fit=crop',
+    alt: 'Embroidery Work',
+    rotate: 'rotate-[14deg]',
+    size: 'w-44 h-56 md:w-52 md:h-64',
+    pos: 'bottom-32 right-12 md:bottom-28 md:right-20',
+    z: 'z-10',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=600&auto=format&fit=crop',
+    alt: 'Brand Design',
+    rotate: '-rotate-[10deg]',
+    size: 'w-40 h-52 md:w-48 md:h-60',
+    pos: 'bottom-16 right-48 md:bottom-12 md:right-64',
+    z: 'z-[5]',
+  },
+];
+
 export const Hero: React.FC = () => {
+  const scrollTo = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+
   return (
-    <section id="home" className="relative min-h-[90vh] md:h-screen flex items-center justify-center overflow-hidden bg-eko-dark pt-20">
-      {/* Background with overlay */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={ASSETS.hero.background} 
-          alt="Modern Printing Studio" 
-          className="w-full h-full object-cover transition-opacity duration-1000 scale-105"
-          onError={(e) => {
-            e.currentTarget.src = "https://images.unsplash.com/photo-1610410065449-3351d0879482?q=80&w=2400&auto=format&fit=crop";
+    <section id="home" className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+      {/* Full-bleed background image */}
+      <div className="absolute inset-0">
+        <img
+          src={ASSETS.hero.background}
+          alt="Eko Prints Studio"
+          className="w-full h-full object-cover"
+          onError={e => {
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2400&auto=format&fit=crop';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-eko-dark/90 via-eko-dark/60 to-eko-dark"></div>
-        
-        {/* Animated Accent Blobs */}
-        <div className="absolute top-1/4 -left-20 w-[40rem] h-[40rem] bg-eko-primary/10 rounded-full blur-[160px] animate-pulse-slow"></div>
-        <div className="absolute -bottom-20 -right-20 w-[40rem] h-[40rem] bg-eko-secondary/10 rounded-full blur-[160px] animate-pulse-slow delay-700"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06090F]/95 via-[#06090F]/75 to-[#06090F]/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-transparent to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="max-w-5xl">
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-eko-primary text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-10 animate-fade-in backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-eko-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-eko-primary"></span>
-            </span>
-            Next-Gen Print Tech: DTF & Large Format
+      {/* Floating photo frames — desktop only */}
+      <div className="hidden lg:block absolute inset-0 z-10 pointer-events-none">
+        {heroFrames.map((frame, i) => (
+          <div
+            key={i}
+            className={`absolute ${frame.pos} ${frame.size} ${frame.rotate} ${frame.z} rounded-md overflow-hidden border-[3px] border-white/80 shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-transform duration-700 hover:scale-105 pointer-events-auto`}
+          >
+            <img
+              src={frame.src}
+              alt={frame.alt}
+              className="w-full h-full object-cover"
+            />
           </div>
-          
-          <h1 className="text-5xl md:text-8xl lg:text-[10rem] font-black font-heading tracking-tighter text-white mb-8 leading-[0.8]">
-            <span className="inline-block hover:text-eko-primary transition-colors duration-300">INDUSTRIAL</span><br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-eko-primary via-eko-secondary to-eko-accent animate-gradient">PRECISION</span><br />
-            <span className="text-white drop-shadow-2xl">PRINTING.</span>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 lg:px-8 pb-20 pt-32 w-full">
+        <div className="max-w-2xl">
+          <span className="inline-flex items-center gap-2 text-eko-primary text-xs font-semibold uppercase tracking-widest mb-6">
+            <span className="w-5 h-px bg-eko-primary" />
+            Large Format · DTF · Embroidery · Apparel
+          </span>
+
+          <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.05] mb-6">
+            We Design,<br />
+            Print &amp;<br />
+            <span className="text-eko-primary">Brand.</span>
           </h1>
-          
-          <p className="mt-10 text-lg md:text-2xl text-gray-400 font-light max-w-2xl leading-relaxed border-l-4 border-eko-primary pl-8 backdrop-blur-sm">
-            Elevate your brand with Eko Prints. Specializing in high-fidelity <span className="text-white font-medium">Large Format Printing</span>, <span className="text-white font-medium">DTF Apparel</span>, and bespoke brand identity systems.
+
+          <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-10 max-w-md">
+            Precision printing and branding solutions from our fully equipped studio — banners, uniforms, signage, merchandise and more.
           </p>
-          
-          <div className="mt-14 flex flex-col sm:flex-row gap-5">
-            <a 
-              href="#services"
-              className="group relative inline-flex items-center justify-center px-10 py-5 text-xs font-black uppercase tracking-[0.3em] text-eko-dark transition-all duration-300 bg-white hover:bg-eko-primary shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-eko-primary/20"
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => scrollTo('#services')}
+              className="inline-flex items-center justify-center gap-2 bg-eko-primary text-[#06090F] px-7 py-3.5 text-sm font-bold hover:bg-white transition-colors"
             >
-              Explore Services
-              <ArrowRight className="ml-4 w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </a>
-            <a 
-              href="#contact"
-              className="group inline-flex items-center justify-center px-10 py-5 text-xs font-black uppercase tracking-[0.3em] text-white transition-all duration-300 bg-transparent border-2 border-white/10 hover:border-eko-secondary hover:bg-eko-secondary/5"
+              Our Services <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => scrollTo('#contact')}
+              className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold text-white border border-white/20 hover:border-white/50 hover:bg-white/5 transition-colors"
             >
-              Get A Quote
-              <Target className="ml-4 w-5 h-5 group-hover:rotate-45 transition-transform" />
-            </a>
+              Get a Quote
+            </button>
           </div>
         </div>
+
+        {/* Stats row */}
+        <div className="mt-16 pt-8 border-t border-white/10 grid grid-cols-3 gap-6 max-w-sm">
+          {[
+            { v: '500+', l: 'Brands Served' },
+            { v: '10+', l: 'Years Experience' },
+            { v: '24hr', l: 'Turnaround' },
+          ].map(s => (
+            <div key={s.l}>
+              <div className="text-xl font-bold text-white">{s.v}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{s.l}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      
-      {/* Decorative vertical lines */}
-      <div className="absolute right-12 bottom-0 h-64 w-px bg-gradient-to-t from-white/20 to-transparent hidden lg:block"></div>
-      <div className="absolute right-16 bottom-0 h-48 w-px bg-gradient-to-t from-white/10 to-transparent hidden lg:block"></div>
+
+      {/* Scroll cue */}
+      <button
+        onClick={() => scrollTo('#services')}
+        className="absolute bottom-6 right-8 z-20 flex flex-col items-center gap-1 text-gray-500 hover:text-white transition-colors"
+        aria-label="Scroll down"
+      >
+        <span className="text-[10px] uppercase tracking-widest">Scroll</span>
+        <ChevronDown className="w-4 h-4 animate-bounce" />
+      </button>
     </section>
   );
 };

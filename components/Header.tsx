@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, Printer } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 
 interface HeaderProps {
   isMenuOpen: boolean;
@@ -7,115 +7,133 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
-  const [logoError, setLogoError] = useState(false);
-  
-  const navLinks = [
-    { name: 'Services', href: '#services' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
-  ];
+  const [scrolled, setScrolled] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    setServicesOpen(false);
+    setAboutOpen(false);
+    if (href === '#home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-eko-dark/80 backdrop-blur-xl border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
+    <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm' : 'bg-white'}`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+
           {/* Logo */}
-          <div 
-            className="flex-shrink-0 flex items-center gap-3 cursor-pointer group" 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            {!logoError ? (
-              <img 
-                src="assets/logo.png" 
-                alt="Eko Prints Logo" 
-                className="h-10 w-auto object-contain transition-transform group-hover:scale-110"
-                onError={() => setLogoError(true)}
-              />
-            ) : (
-              <div className="w-10 h-10 bg-eko-primary flex items-center justify-center rounded-lg shadow-[0_0_20px_rgba(0,209,255,0.4)]">
-                <Printer className="w-6 h-6 text-eko-dark" />
-              </div>
-            )}
-            <span className="font-black text-2xl tracking-tighter text-white group-hover:text-eko-primary transition-colors">
-              EKO<span className="text-eko-primary">PRINTS</span>
-            </span>
+          <div className="flex-shrink-0 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <img
+              src="assets/logos/EKO PRINTS.png"
+              alt="Eko Prints"
+              className="h-12 w-auto object-contain"
+            />
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-10">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-gray-400 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.3em] relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-eko-primary transition-all group-hover:w-full"></span>
-              </a>
-            ))}
-            <a 
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              className="bg-white text-eko-dark px-8 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-eko-primary transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Get Quote
+          {/* Center Nav — Desktop */}
+          <nav className="hidden lg:flex items-center gap-8">
+            <a href="#home" onClick={e => scrollTo(e, '#home')} className="text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
+              Home
+            </a>
+
+            {/* About Us dropdown */}
+            <div className="relative" onMouseEnter={() => setAboutOpen(true)} onMouseLeave={() => setAboutOpen(false)}>
+              <button className="flex items-center gap-1 text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
+                About Us <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {aboutOpen && (
+                <div className="absolute top-full left-0 pt-2">
+                  <div className="bg-white border border-gray-100 shadow-lg rounded-md py-2 min-w-[180px]">
+                    <a href="#about" onClick={e => scrollTo(e, '#about')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Story</a>
+                    <a href="#machines" onClick={e => scrollTo(e, '#machines')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Machines</a>
+                    <a href="#portfolio" onClick={e => scrollTo(e, '#portfolio')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Our Work</a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Services dropdown */}
+            <div className="relative" onMouseEnter={() => setServicesOpen(true)} onMouseLeave={() => setServicesOpen(false)}>
+              <button className="flex items-center gap-1 text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
+                Services <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {servicesOpen && (
+                <div className="absolute top-full left-0 pt-2">
+                  <div className="bg-white border border-gray-100 shadow-lg rounded-md py-2 min-w-[200px]">
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">All Services</a>
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Large Format Printing</a>
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">DTF Printing</a>
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Embroidery</a>
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">T-Shirt Printing</a>
+                    <a href="#services" onClick={e => scrollTo(e, '#services')} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-eko-primary">Design & Branding</a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-gray-700 hover:text-eko-primary text-sm font-medium transition-colors">
+              Contact Us
+            </a>
+
+            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-eko-primary hover:text-eko-primary/80 text-sm font-medium transition-colors">
+              Profile
             </a>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-eko-primary focus:outline-none transition-colors"
-            >
-              {isMenuOpen ? <X className="h-8 w-8" /> : <Menu className="h-8 w-8" />}
-            </button>
+          {/* Right — Phone */}
+          <div className="hidden lg:flex items-center gap-2 text-sm">
+            <div className="text-right">
+              <span className="text-gray-400 text-xs block leading-tight">For Inquiries:</span>
+              <a href="tel:+256703580516" className="text-gray-800 font-semibold flex items-center gap-1.5 hover:text-eko-primary transition-colors">
+                <Phone className="w-3.5 h-3.5" />
+                +256 703 580 516
+              </a>
+            </div>
           </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="lg:hidden text-gray-700"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Nav Overlay */}
-      <div className={`md:hidden fixed inset-0 top-24 bg-eko-dark transition-all duration-500 z-40 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none translate-x-full'}`}>
-        <div className="flex flex-col p-8 space-y-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="text-3xl font-black font-heading text-white hover:text-eko-primary transition-colors"
-            >
-              {link.name}
-            </a>
-          ))}
-          <a 
-            href="#contact"
-            onClick={(e) => handleNavClick(e, '#contact')}
-            className="w-full bg-eko-primary text-eko-dark py-6 text-center font-black uppercase tracking-widest text-sm"
-          >
-            Start A Project
-          </a>
+      {/* Mobile Nav */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-100">
+          <div className="px-6 py-6 flex flex-col gap-4">
+            <a href="#home" onClick={e => scrollTo(e, '#home')} className="text-gray-700 font-medium">Home</a>
+            <a href="#about" onClick={e => scrollTo(e, '#about')} className="text-gray-700 font-medium">About Us</a>
+            <a href="#machines" onClick={e => scrollTo(e, '#machines')} className="text-gray-700 font-medium pl-4 text-sm text-gray-500">Our Machines</a>
+            <a href="#portfolio" onClick={e => scrollTo(e, '#portfolio')} className="text-gray-700 font-medium pl-4 text-sm text-gray-500">Our Work</a>
+            <a href="#services" onClick={e => scrollTo(e, '#services')} className="text-gray-700 font-medium">Services</a>
+            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-gray-700 font-medium">Contact Us</a>
+            <a href="#contact" onClick={e => scrollTo(e, '#contact')} className="text-eko-primary font-medium">Profile</a>
+            <div className="pt-4 border-t border-gray-100">
+              <span className="text-gray-400 text-xs">For Inquiries:</span>
+              <a href="tel:+256703580516" className="flex items-center gap-2 text-gray-800 font-semibold mt-1">
+                <Phone className="w-4 h-4" /> +256 703 580 516
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };

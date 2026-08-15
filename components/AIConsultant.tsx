@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Sparkles, Loader2, Target, Printer } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, Printer } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { generatePrintAdvice } from '../services/geminiService';
 
@@ -8,132 +8,104 @@ export const AIConsultant: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: "Welcome to the Eko Prints Studio. I'm EkoBot, your technical print consultant. Tell me about your project, and I'll recommend the best production method—be it Large Format, DTF, or Branding." }
+    { role: 'model', text: "Hi! I'm EkoBot. Tell me about your project and I'll recommend the best printing method for you." }
   ]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
+    const userMsg: ChatMessage = { role: 'user', text: input };
+    setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
-
     try {
-      const responseText = await generatePrintAdvice(input);
-      setMessages(prev => [...prev, { role: 'model', text: responseText }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "Connection error. Our servers are currently busy producing high-quality prints. Please try again in a moment.", isError: true }]);
+      const text = await generatePrintAdvice(input);
+      setMessages(prev => [...prev, { role: 'model', text }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'model', text: 'Connection error. Please try again.', isError: true }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
   return (
     <>
-      {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-8 right-8 z-40 bg-white text-eko-dark w-16 h-16 rounded-full shadow-[0_0_50px_rgba(0,209,255,0.3)] hover:bg-eko-primary transition-all duration-500 transform hover:scale-110 flex items-center justify-center group ${isOpen ? 'opacity-0 scale-50 pointer-events-none' : 'opacity-100 scale-100'}`}
-        aria-label="Open AI Consultant"
+        className={`fixed bottom-6 right-6 z-40 w-12 h-12 bg-eko-primary text-[#06090F] flex items-center justify-center shadow-lg hover:bg-white transition-colors ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        aria-label="Open chat"
       >
-        <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
-        <span className="absolute -top-1 -right-1 flex h-4 w-4">
-           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-eko-primary opacity-75"></span>
-           <span className="relative inline-flex rounded-full h-4 w-4 bg-eko-primary"></span>
-        </span>
+        <MessageSquare className="w-5 h-5" />
       </button>
 
-      {/* Chat Window */}
-      <div 
-        className={`fixed bottom-8 right-8 z-50 w-[90vw] max-w-[400px] bg-eko-dark border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[70vh] md:max-h-[600px] overflow-hidden transition-all duration-500 origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-50 opacity-0 translate-y-20 pointer-events-none'}`}
-      >
-        
-        {/* Header */}
-        <div className="bg-white p-6 flex justify-between items-center">
+      <div className={`fixed bottom-6 right-6 z-50 w-[90vw] max-w-sm bg-[#06090F] border border-white/10 flex flex-col max-h-[70vh] md:max-h-[560px] shadow-2xl transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}`}>
+
+        <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-eko-dark flex items-center justify-center rounded-lg">
-              <Printer className="w-5 h-5 text-eko-primary" />
+            <div className="w-8 h-8 bg-eko-primary/10 border border-eko-primary/20 flex items-center justify-center">
+              <Printer className="w-4 h-4 text-eko-primary" />
             </div>
             <div>
-              <h3 className="font-black text-eko-dark text-xs uppercase tracking-widest leading-none">EkoBot Pro</h3>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight mt-1">AI Print Consultant</p>
+              <p className="text-white text-sm font-semibold leading-none">EkoBot</p>
+              <p className="text-gray-500 text-[10px] mt-0.5">Print Consultant</p>
             </div>
           </div>
-          <button onClick={() => setIsOpen(false)} className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-eko-dark hover:bg-eko-secondary hover:text-white transition-colors">
-            <X className="w-5 h-5" />
+          <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#080B12] min-h-[300px]">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div 
-                className={`max-w-[85%] px-5 py-4 text-sm leading-relaxed ${
-                  msg.role === 'user' 
-                    ? 'bg-eko-primary text-eko-dark font-bold rounded-2xl rounded-tr-none' 
-                    : 'bg-white/5 text-gray-300 border border-white/10 rounded-2xl rounded-tl-none'
-                } ${msg.isError ? 'border-red-500 text-red-200 bg-red-500/10' : ''}`}
-              >
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] px-4 py-2.5 text-sm leading-relaxed ${
+                msg.role === 'user'
+                  ? 'bg-eko-primary text-[#06090F] font-medium'
+                  : msg.isError
+                    ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+                    : 'bg-white/5 text-gray-300 border border-white/5'
+              }`}>
                 {msg.text}
               </div>
             </div>
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-none px-5 py-4">
-                <Loader2 className="w-5 h-5 animate-spin text-eko-primary" />
+              <div className="bg-white/5 border border-white/5 px-4 py-2.5">
+                <Loader2 className="w-4 h-4 animate-spin text-eko-primary" />
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={bottomRef} />
         </div>
 
-        {/* Input Area */}
-        <div className="p-6 bg-eko-dark border-t border-white/5">
-          <div className="relative flex items-center">
+        <div className="p-4 border-t border-white/5">
+          <div className="flex gap-2">
             <input
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="How can I help with your print today?"
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-5 pr-14 py-4 text-white focus:outline-none focus:border-eko-primary transition-all text-sm placeholder:text-gray-600"
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder="Ask about your print project..."
+              className="flex-1 bg-white/5 border border-white/10 px-4 py-2.5 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:border-eko-primary transition-colors"
             />
-            <button 
+            <button
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="absolute right-2 bg-white text-eko-dark p-3 rounded-lg hover:bg-eko-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="bg-eko-primary text-[#06090F] px-3 py-2.5 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>
           </div>
-          <div className="mt-4 flex items-center justify-between px-1">
-             <div className="flex gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Systems Online</span>
-             </div>
-             <p className="text-[10px] text-gray-700 font-bold uppercase tracking-[0.1em]">Engineered by Gemini 3</p>
-          </div>
         </div>
-
       </div>
     </>
   );
