@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle } from 'lucide-react';
+import { openWhatsApp } from '../services/whatsapp';
+import { trackPhoneCall } from '../services/analytics';
 
 interface HeaderProps {
   isMenuOpen: boolean;
@@ -109,20 +111,30 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
           })}
         </nav>
 
-        {/* Right CTA Actions: Call Button + Get a Quote */}
-        <div className="hidden lg:flex items-center gap-3">
+        {/* Right CTA Actions: WhatsApp + Call Button + Get a Quote */}
+        <div className="hidden lg:flex items-center gap-2.5">
+          <button
+            onClick={() => openWhatsApp({ source: 'header' })}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba59] transition-all shadow-sm cursor-pointer"
+            title="Chat on WhatsApp"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            <span>WhatsApp</span>
+          </button>
+
           <a
             href="tel:+256703580516"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all"
+            onClick={() => trackPhoneCall('header_desktop')}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all"
             title="Call +256 703 580 516"
           >
             <Phone className="w-3.5 h-3.5 text-pink-600" />
-            <span>Call: +256 703 580 516</span>
+            <span>Call Us</span>
           </a>
 
           <button
             onClick={() => onOpenQuote ? onOpenQuote() : scrollTo({ preventDefault: () => {} } as any, 'contact')}
-            className="relative px-6 py-2.5 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 hover:from-blue-800 hover:to-pink-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+            className="relative px-5 py-2 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 hover:from-blue-800 hover:to-pink-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
           >
             GET A QUOTE
           </button>
@@ -156,8 +168,19 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
             ))}
             
             <div className="pt-2 flex flex-col gap-2.5">
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  openWhatsApp({ source: 'header_mobile_drawer' });
+                }}
+                className="w-full py-3 rounded-full text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba59] flex items-center justify-center gap-2 shadow-sm text-center cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
+              </button>
+
               <a
                 href="tel:+256703580516"
+                onClick={() => trackPhoneCall('header_mobile_drawer')}
                 className="w-full py-3 rounded-full text-xs font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center justify-center gap-2 shadow-sm text-center"
               >
                 <Phone className="w-4 h-4 text-pink-600" /> Call: +256 703 580 516
@@ -169,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
                   if (onOpenQuote) onOpenQuote();
                   else scrollTo({ preventDefault: () => {} } as any, 'contact');
                 }}
-                className="w-full py-3 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 text-center shadow-md"
+                className="w-full py-3 rounded-full text-xs font-bold text-white uppercase tracking-wider bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-500 text-center shadow-md cursor-pointer"
               >
                 GET A QUOTE
               </button>

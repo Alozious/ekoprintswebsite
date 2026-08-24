@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, CheckCircle, Send, MessageSquare, Loader2 } from 'lucide-react';
 import { saveQuoteToFirebase } from '../services/firebase';
+import { trackQuoteSubmit } from '../services/analytics';
+import { openWhatsApp } from '../services/whatsapp';
 
 interface QuoteModalProps {
   isOpen: boolean;
@@ -40,6 +42,9 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
 
       setQuoteId(id);
       setSubmitted(true);
+
+      // Track Google conversion event
+      trackQuoteSubmit({ ...formData, quoteId: id });
     } catch (err: any) {
       console.warn('Firebase sync warning (will fallback seamlessly):', err);
       
@@ -53,6 +58,9 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
 
       setQuoteId(fallbackId);
       setSubmitted(true);
+
+      // Track Google conversion event with fallback ID
+      trackQuoteSubmit({ ...formData, quoteId: fallbackId });
     } finally {
       setLoading(false);
     }
@@ -60,8 +68,18 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
 
   const handleWhatsAppDirect = () => {
     const refText = quoteId ? ` (Ref: #${quoteId.slice(0, 8)})` : '';
-    const text = `Hi Eko Prints, I would like to request a quote${refText} for ${formData.service}.%0AName: ${encodeURIComponent(formData.name)}%0APhone: ${encodeURIComponent(formData.phone)}%0AQuantity: ${encodeURIComponent(formData.quantity)}%0ADetails: ${encodeURIComponent(formData.details)}`;
-    window.open(`https://wa.me/256703580516?text=${text}`, '_blank');
+    const customMsg = `Hi Eko Prints, I would like to request a quote${refText} for *${formData.service}*.\nName: ${formData.name || 'N/A'}\nPhone: ${formData.phone || 'N/A'}\nQuantity: ${formData.quantity || '1'}\nDetails: ${formData.details || 'General inquiry'}`;
+
+    openWhatsApp({
+      source: 'quote_modal',
+      serviceName: formData.service,
+      quoteRef: quoteId || undefined,
+      customMessage: customMsg,
+      additionalParams: {
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+      }
+    });
   };
 
   const handleReset = () => {

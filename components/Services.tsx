@@ -1,6 +1,7 @@
 import React from 'react';
-import { Camera, Printer, FileText, Shirt, Monitor, Package } from 'lucide-react';
+import { Camera, Printer, FileText, Shirt, Monitor, MessageCircle } from 'lucide-react';
 import { ASSETS } from '../constants/images';
+import { openWhatsApp } from '../services/whatsapp';
 
 interface ServicesProps {
   onOpenQuote?: () => void;
@@ -107,9 +108,28 @@ export const Services: React.FC<ServicesProps> = ({ onOpenQuote }) => {
                     <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug group-hover:text-pink-600 transition-colors">
                       {svc.title}
                     </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">
+                    <p className="text-xs text-gray-500 leading-relaxed mb-4">
                       {svc.description}
                     </p>
+                  </div>
+
+                  {/* Card Actions */}
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => openWhatsApp({ source: 'service_card', serviceName: svc.title })}
+                      className="text-[11px] font-bold text-green-700 hover:text-green-800 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors cursor-pointer"
+                      title={`Chat on WhatsApp about ${svc.title}`}
+                    >
+                      <MessageCircle className="w-3 h-3 text-[#25D366]" /> WhatsApp
+                    </button>
+                    {onOpenQuote && (
+                      <button
+                        onClick={onOpenQuote}
+                        className="text-[11px] font-bold text-gray-600 hover:text-pink-600 px-2 py-1.5 transition-colors cursor-pointer"
+                      >
+                        Quote &rarr;
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

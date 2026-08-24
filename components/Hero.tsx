@@ -1,6 +1,8 @@
 import React from 'react';
-import { ArrowRight, Sparkles, Truck, DollarSign } from 'lucide-react';
+import { ArrowRight, Sparkles, Truck, DollarSign, MessageCircle } from 'lucide-react';
 import { ASSETS } from '../constants/images';
+import { openWhatsApp } from '../services/whatsapp';
+import { pushDataLayer } from '../services/analytics';
 
 interface HeroProps {
   onOpenQuote?: () => void;
@@ -8,8 +10,15 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
   const scrollTo = (id: string) => {
+    pushDataLayer('navigation_click', { target_section: id, location: 'hero' });
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleHeroWhatsApp = () => {
+    openWhatsApp({
+      source: 'hero_cta',
+    });
   };
 
   return (
@@ -52,17 +61,25 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 mb-12">
+            <div className="flex flex-wrap items-center gap-3.5 mb-12">
+              <button
+                onClick={handleHeroWhatsApp}
+                className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-[#25D366] hover:bg-[#20ba59] shadow-lg shadow-green-600/30 hover:shadow-green-600/50 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
+                title="Chat on WhatsApp with Eko Prints Masaka"
+              >
+                <MessageCircle className="w-4 h-4" /> CHAT ON WHATSAPP
+              </button>
+
               <button
                 onClick={() => scrollTo('services')}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-lg shadow-pink-600/30 hover:shadow-pink-600/50 transition-all duration-300 transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-lg shadow-pink-600/30 hover:shadow-pink-600/50 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
               >
                 OUR SERVICES <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
                 onClick={() => scrollTo('contact')}
-                className="inline-flex items-center justify-center px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/30 hover:border-white hover:bg-white/10 transition-all duration-300"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/30 hover:border-white hover:bg-white/10 transition-all duration-300 cursor-pointer"
               >
                 CONTACT US
               </button>

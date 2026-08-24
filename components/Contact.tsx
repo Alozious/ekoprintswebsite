@@ -1,5 +1,7 @@
 import React from 'react';
 import { Phone, MapPin, MessageCircle, ExternalLink } from 'lucide-react';
+import { openWhatsApp } from '../services/whatsapp';
+import { trackPhoneCall } from '../services/analytics';
 
 export const Contact: React.FC = () => {
   return (
@@ -21,15 +23,19 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Call or WhatsApp</p>
-                  <a href="tel:+256703580516" className="block text-white font-semibold hover:text-eko-primary transition-colors">+256 703 580 516</a>
-                  <a
-                    href="https://wa.me/256703580516"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-3 text-xs text-green-400 hover:text-white transition-colors"
+                  <a 
+                    href="tel:+256703580516" 
+                    onClick={() => trackPhoneCall('contact_section')}
+                    className="block text-white font-semibold hover:text-eko-primary transition-colors"
+                  >
+                    +256 703 580 516
+                  </a>
+                  <button
+                    onClick={() => openWhatsApp({ source: 'contact_section' })}
+                    className="inline-flex items-center gap-2 mt-3 text-xs text-green-400 hover:text-white transition-colors cursor-pointer"
                   >
                     <MessageCircle className="w-3.5 h-3.5" /> Chat on WhatsApp
-                  </a>
+                  </button>
                 </div>
               </div>
 
