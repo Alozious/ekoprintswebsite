@@ -135,6 +135,9 @@ export const pushDataLayer = (eventName: string, eventData: Record<string, any> 
   }
 };
 
+export const GOOGLE_ADS_ID = 'AW-17662736316';
+export const WHATSAPP_CONVERSION_SEND_TO = 'AW-17662736316/oqr5CNzCp-IcELzvn-ZB';
+
 /**
  * Track WhatsApp CTA Clicks (Conversion Action)
  */
@@ -160,10 +163,19 @@ export const trackWhatsAppClick = (source: string, details: Record<string, any> 
     currency: 'UGX',
   });
 
-  // Primary conversion event
+  // Primary Google Ads conversion event with exact send_to label
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', {
+      send_to: WHATSAPP_CONVERSION_SEND_TO,
+      value: details.value || 1.0,
+      currency: 'UGX',
+      event_callback: () => {},
+    });
+  }
+
   pushDataLayer('conversion', {
-    send_to: 'AW-CONVERSION_ID', // Replace with Google Ads conversion action ID if configured in GTM
-    conversion_type: 'whatsapp_lead',
+    send_to: WHATSAPP_CONVERSION_SEND_TO,
+    conversion_type: 'whatsapp_from_ads',
     source,
   });
 };
@@ -182,6 +194,14 @@ export const trackPhoneCall = (source: string, phone: string = '+256703580516') 
     method: 'phone',
     source,
   });
+
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', {
+      send_to: GOOGLE_ADS_ID,
+      event_category: 'Contact',
+      event_label: 'phone_call',
+    });
+  }
 };
 
 /**
@@ -203,6 +223,16 @@ export const trackQuoteSubmit = (quoteDetails: Record<string, any>) => {
     value: 5.0,
     currency: 'UGX',
   });
+
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', {
+      send_to: GOOGLE_ADS_ID,
+      event_category: 'Contact',
+      event_label: 'quote_form_lead',
+      value: 5.0,
+      currency: 'UGX',
+    });
+  }
 
   pushDataLayer('conversion', {
     conversion_type: 'quote_form_lead',
