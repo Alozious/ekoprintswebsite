@@ -41,6 +41,10 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
     e.preventDefault();
     setIsMenuOpen(false);
     setActiveNav(id);
+    if (id === 'shop') {
+      window.location.hash = 'shop';
+      return;
+    }
     if (id === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -54,7 +58,8 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
   const navItems = [
     { label: 'HOME', id: 'home' },
     { label: 'ABOUT US', id: 'about' },
-    { label: 'SHOP', id: 'services' },
+    { label: 'SHOP', id: 'shop' },
+    { label: 'SERVICES', id: 'services' },
     { label: 'GALLERY', id: 'gallery' },
     { label: 'TESTIMONIALS', id: 'testimonials' },
     { label: 'CONTACT US', id: 'contact' },
@@ -91,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
         </div>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-4 xl:gap-6">
           {navItems.map((item) => {
             const isActive = activeNav === item.id;
             return (
