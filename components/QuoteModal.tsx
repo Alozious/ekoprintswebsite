@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, Send, MessageSquare, Loader2 } from 'lucide-react';
+import { X, CheckCircle, Send, Loader2 } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import { saveQuoteToFirebase } from '../services/firebase';
 import { trackQuoteSubmit } from '../services/analytics';
 import { openWhatsApp } from '../services/whatsapp';
@@ -97,11 +98,11 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-y-auto border border-gray-100">
         
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-600 p-6 text-white relative">
+        <div className="bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-600 p-4 sm:p-6 text-white relative">
           <button
             onClick={handleReset}
             className="absolute top-5 right-5 text-white/80 hover:text-white p-1 rounded-full hover:bg-white/20 transition-colors"
@@ -120,7 +121,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {submitted ? (
             <div className="text-center py-6">
               <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -140,7 +141,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
                   onClick={handleWhatsAppDirect}
                   className="px-5 py-2.5 bg-[#25D366] text-white rounded-full text-xs font-bold flex items-center gap-2 hover:bg-[#20ba59] transition-colors shadow-sm"
                 >
-                  <MessageSquare className="w-4 h-4" /> Message on WhatsApp
+                  <WhatsAppIcon className="w-4 h-4" /> Message on WhatsApp
                 </button>
                 <button
                   onClick={handleReset}
@@ -189,7 +190,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
                     <option>Branding &amp; Identity</option>
                     <option>Marketing Materials</option>
                     <option>Custom Merchandise</option>
-                    <option>Design Services</option>
+                    <option>Design &amp; Artwork</option>
                     <option>DTF Apparel Printing</option>
                     <option>Embroidery</option>
                   </select>
@@ -228,7 +229,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={loading}
@@ -250,7 +251,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose }) => {
                   className="px-4 py-3 rounded-full bg-[#25D366] text-white hover:bg-[#20ba59] transition-colors flex items-center justify-center shadow-sm"
                   title="Send via WhatsApp"
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <WhatsAppIcon className="w-4 h-4" />
                 </button>
               </div>
             </form>

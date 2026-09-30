@@ -1,5 +1,6 @@
 import React from 'react';
-import { Phone, MapPin, MessageCircle, ExternalLink } from 'lucide-react';
+import { Phone, MapPin, ExternalLink } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import { openWhatsApp } from '../services/whatsapp';
 import { trackPhoneCall } from '../services/analytics';
 
@@ -34,7 +35,7 @@ export const Contact: React.FC = () => {
                     onClick={() => openWhatsApp({ source: 'contact_section' })}
                     className="inline-flex items-center gap-2 mt-3 text-xs text-green-400 hover:text-white transition-colors cursor-pointer"
                   >
-                    <MessageCircle className="w-3.5 h-3.5" /> Chat on WhatsApp
+                    <WhatsAppIcon className="w-3.5 h-3.5" /> WhatsApp
                   </button>
                 </div>
               </div>

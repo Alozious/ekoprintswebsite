@@ -8,16 +8,41 @@ import { Footer } from './components/Footer';
 import { QuoteModal } from './components/QuoteModal';
 import { AIConsultant } from './components/AIConsultant';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { Shop } from './components/Shop';
+import { Admin } from './components/Admin';
 import { initAnalytics } from './services/analytics';
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
+  const [isShopOpen, setIsShopOpen] = useState(() => window.location.hash === '#shop');
+  const [isAdminOpen, setIsAdminOpen] = useState(() => window.location.hash === '#admin');
 
   useEffect(() => {
     // Initialize Google Tag DataLayer, preserve UTM / Ad attribution from query parameters
     initAnalytics();
   }, []);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setIsShopOpen(window.location.hash === '#shop');
+      setIsAdminOpen(window.location.hash === '#admin');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  if (isAdminOpen) return <Admin />;
+
+  if (isShopOpen) {
+    return (
+      <>
+        <Shop onOpenQuote={() => setIsQuoteOpen(true)} />
+        <QuoteModal isOpen={isQuoteOpen} onClose={() => setIsQuoteOpen(false)} />
+        <FloatingWhatsApp />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-white selection:bg-pink-500 selection:text-white">

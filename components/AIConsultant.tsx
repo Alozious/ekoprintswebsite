@@ -40,13 +40,13 @@ export const AIConsultant: React.FC = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-40 w-12 h-12 bg-eko-primary text-[#06090F] flex items-center justify-center shadow-lg hover:bg-white transition-colors ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 w-12 h-12 bg-eko-primary text-[#06090F] flex items-center justify-center shadow-lg hover:bg-white transition-colors ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         aria-label="Open chat"
       >
         <MessageSquare className="w-5 h-5" />
       </button>
 
-      <div className={`fixed bottom-6 right-6 z-50 w-[90vw] max-w-sm bg-[#06090F] border border-white/10 flex flex-col max-h-[70vh] md:max-h-[560px] shadow-2xl transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}`}>
+      <div className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-1.5rem)] max-w-sm bg-[#06090F] border border-white/10 flex flex-col max-h-[calc(100dvh-1.5rem)] sm:max-h-[70vh] md:max-h-[560px] shadow-2xl transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}`}>
 
         <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-3">

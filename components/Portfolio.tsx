@@ -5,8 +5,8 @@ export const Portfolio: React.FC = () => {
   const portfolioItems = ASSETS.portfolio;
 
   return (
-    <section id="gallery" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="gallery" className="py-14 sm:py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -27,7 +27,7 @@ export const Portfolio: React.FC = () => {
                 alt={item.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 sm:p-4 text-white">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-pink-400 mb-0.5">
                   {item.category}
                 </span>

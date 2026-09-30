@@ -1,16 +1,17 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCyHuYFMFvbrlVe5eeBeolMguwPn3_IuK8",
-  authDomain: "ekoprints-1de49.firebaseapp.com",
-  projectId: "ekoprints-1de49",
-  storageBucket: "ekoprints-1de49.firebasestorage.app",
-  messagingSenderId: "286028361290",
-  appId: "1:286028361290:web:41fe944b335469156340b3",
-  measurementId: "G-K4Z0D0BMBJ"
+  apiKey: "AIzaSyAtEs_BjXJ7EFGnszaFtbf13dq-kcvEVk8",
+  authDomain: "luganda-tts-stt-chimptech.firebaseapp.com",
+  projectId: "luganda-tts-stt-chimptech",
+  storageBucket: "luganda-tts-stt-chimptech.firebasestorage.app",
+  messagingSenderId: "800236652414",
+  appId: "1:800236652414:web:9bba62f30888c2903c152f",
+  measurementId: "G-9Y68FZQWRS"
 };
 
 // Initialize Firebase App
@@ -28,6 +29,7 @@ if (typeof window !== 'undefined') {
 
 // Initialize Firestore
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export interface QuoteData {
   name: string;

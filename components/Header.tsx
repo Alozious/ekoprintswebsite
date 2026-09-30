@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, MessageCircle } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import { openWhatsApp } from '../services/whatsapp';
 import { trackPhoneCall } from '../services/analytics';
 
@@ -53,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
   const navItems = [
     { label: 'HOME', id: 'home' },
     { label: 'ABOUT US', id: 'about' },
-    { label: 'SERVICES', id: 'services' },
+    { label: 'SHOP', id: 'services' },
     { label: 'GALLERY', id: 'gallery' },
     { label: 'TESTIMONIALS', id: 'testimonials' },
     { label: 'CONTACT US', id: 'contact' },
@@ -61,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
 
   return (
     <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-white py-4'}`}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between">
         
         {/* Brand Logo */}
         <div 
@@ -118,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba59] transition-all shadow-sm cursor-pointer"
             title="Chat on WhatsApp"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
+            <WhatsAppIcon className="w-3.5 h-3.5" />
             <span>WhatsApp</span>
           </button>
 
@@ -152,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
 
       {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 shadow-xl px-6 py-6 animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden max-h-[calc(100dvh-4.5rem)] overflow-y-auto bg-white border-t border-gray-100 shadow-xl px-4 sm:px-6 py-5 animate-in slide-in-from-top duration-300">
           <div className="flex flex-col gap-4">
             {navItems.map((item) => (
               <a
@@ -175,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen, onOpe
                 }}
                 className="w-full py-3 rounded-full text-xs font-bold text-white bg-[#25D366] hover:bg-[#20ba59] flex items-center justify-center gap-2 shadow-sm text-center cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
+                <WhatsAppIcon className="w-4 h-4" /> WhatsApp
               </button>
 
               <a

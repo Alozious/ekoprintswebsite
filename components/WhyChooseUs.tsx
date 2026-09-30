@@ -1,5 +1,4 @@
 import React from 'react';
-import { Users, Printer, Handshake, ShieldCheck } from 'lucide-react';
 
 export const WhyChooseUs: React.FC = () => {
   const scrollTo = (id: string) => {
@@ -9,30 +8,26 @@ export const WhyChooseUs: React.FC = () => {
 
   const features = [
     {
-      icon: Users,
       title: 'Experienced Team',
       description: 'Skilled professionals committed to excellence.',
     },
     {
-      icon: Printer,
       title: 'Modern Equipment',
       description: 'State-of-the-art machines for perfect results.',
     },
     {
-      icon: Handshake,
       title: 'Customer Focused',
       description: 'We listen, we care, and we deliver beyond expectations.',
     },
     {
-      icon: ShieldCheck,
       title: 'Satisfaction Guaranteed',
       description: 'Your satisfaction is our top priority.',
     },
   ];
 
   return (
-    <section id="about" className="relative py-16 lg:py-20 text-white bg-gradient-to-r from-[#0d21a1] via-[#4f1896] to-[#e11278] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="about" className="relative py-14 sm:py-16 lg:py-20 text-white bg-gradient-to-r from-[#0d21a1] via-[#4f1896] to-[#e11278] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
           {/* Left Column: Heading & Intro */}
@@ -56,12 +51,8 @@ export const WhyChooseUs: React.FC = () => {
           {/* Right Column: 4 Feature Highlights */}
           <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feat, idx) => {
-              const Icon = feat.icon;
               return (
                 <div key={idx} className="flex flex-col items-start text-left">
-                  <div className="mb-4 text-white/90">
-                    <Icon className="w-8 h-8 stroke-[1.5]" />
-                  </div>
                   <h3 className="text-sm font-bold text-white mb-2 leading-snug">
                     {feat.title}
                   </h3>
